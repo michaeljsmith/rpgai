@@ -7,6 +7,8 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 
 public class Collections {
+  private Collections() {}
+
   public static <T> MutableCollection<T> newCollection() {
     return new MutableCollection<T>() {
       private final Set<T> items = new HashSet<T>();
