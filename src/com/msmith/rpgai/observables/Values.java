@@ -29,7 +29,7 @@ public class Values {
     public void set(final T newValue) {
       final T oldValue = value;
       value = newValue;
-      observers.forEach(new ObserverSet.Notifier<Observer<T>>() {
+      observers.notifyAll(new ObserverSet.Notifier<Observer<T>>() {
         @Override
         public void notify(Observer<T> observer) {
           observer.onChange(oldValue, newValue);

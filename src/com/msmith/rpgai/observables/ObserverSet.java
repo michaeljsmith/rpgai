@@ -16,14 +16,19 @@ class ObserverSet<T> {
 
   private Set<T> observers;
 
-  public void forEach(Notifier<T> notifier) {
+  public void notifyAll(Notifier<T> notifier) {
     for (T observer: observers) {
       notifier.notify(observer);
     }
   }
 
-  public void add(T observer) {
-    observers.add(observer);
+  public void add(final T observer) {
+    Preconditions.checkArgument(observers.add(observer), new Object() {
+      @Override
+      public String toString() {
+        return "Duplicate observer: " + observer;
+      }
+    });
   }
  
   public void remove(final T observer) {
