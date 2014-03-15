@@ -2,6 +2,8 @@ package com.msmith.rpgai.observables;
 
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+
 class ObserverSet<T> {
 
   public interface Notifier<T> {
@@ -24,7 +26,22 @@ class ObserverSet<T> {
     observers.add(observer);
   }
  
-  public void remove(T observer) {
-    observers.remove(observer);
+  public void remove(final T observer) {
+    Preconditions.checkArgument(observers.remove(observer), new Object() {
+      @Override
+      public String toString() {
+        return "Removed non-existent observer: " + observer;
+      }
+    });
+  }
+  
+  @Override
+  protected void finalize() throws Throwable {
+    Preconditions.checkState(observers.isEmpty(), new Object() {
+      @Override
+      public String toString() {
+        return "Observers not deregistered: " + observers;
+      }
+    });
   }
 }
