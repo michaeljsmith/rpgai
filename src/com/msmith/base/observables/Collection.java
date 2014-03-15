@@ -1,4 +1,4 @@
-package com.msmith.rpgai.observables;
+package com.msmith.base.observables;
 
 public interface Collection<T> extends Iterable<T> {
   interface Observer<T> {

@@ -1,4 +1,4 @@
-package com.msmith.rpgai.observables;
+package com.msmith.base.observables;
 
 public class Values {
 
@@ -16,12 +16,12 @@ public class Values {
     }
 
     @Override
-    public void addObserver(com.msmith.rpgai.observables.Value.Observer<T> observer) {
+    public void addObserver(com.msmith.base.observables.Value.Observer<T> observer) {
       observers.add(observer);
     }
 
     @Override
-    public void removeObserver(com.msmith.rpgai.observables.Value.Observer<T> observer) {
+    public void removeObserver(com.msmith.base.observables.Value.Observer<T> observer) {
       observers.remove(observer);
     }
 

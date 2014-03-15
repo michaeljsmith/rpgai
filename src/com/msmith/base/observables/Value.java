@@ -1,4 +1,4 @@
-package com.msmith.rpgai.observables;
+package com.msmith.base.observables;
 
 public interface Value<T> {
   interface Observer<T> {

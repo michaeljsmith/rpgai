@@ -1,4 +1,4 @@
-package com.msmith.rpgai.observables;
+package com.msmith.base.observables;
 
 import java.util.HashSet;
 import java.util.Iterator;
