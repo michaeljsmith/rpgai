@@ -3,16 +3,21 @@ package com.msmith.base;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.msmith.base.reflection.TypeLiteral;
+
 public class UniversalProviders {
   private UniversalProviders() {}
 
   public static UniversalProvider newSimpleUniversalProvider() {
     return new UniversalProvider() {
-      private final Map<Class<?>, Object> classObjectMap = new HashMap<Class<?>, Object>();
+      private final Map<TypeLiteral<?>, Object> classObjectMap =
+              new HashMap<TypeLiteral<?>, Object>();
 
       @Override
-      public <T> T get(Class<T> clazz) {
-        Object object = classObjectMap.get(clazz);
+      public <T> T get(TypeLiteral<T> type) {
+        Class<T> clazz = type.getClassObject();
+
+        Object object = classObjectMap.get(type);
         if (object != null) {
           return clazz.cast(object);
         }
@@ -24,7 +29,7 @@ public class UniversalProviders {
           throw new RuntimeException(e);
         }
 
-        classObjectMap.put(clazz, newInstance);
+        classObjectMap.put(type, newInstance);
         return newInstance;
       }
     };

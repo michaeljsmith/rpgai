@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-class ObserverSet<T> {
+public class ObserverSet<T> {
 
   public interface Notifier<T> {
     void notify(T observer);
@@ -30,7 +30,7 @@ class ObserverSet<T> {
       }
     });
   }
- 
+
   public void remove(final T observer) {
     Preconditions.checkArgument(observers.remove(observer), new Object() {
       @Override
@@ -39,9 +39,8 @@ class ObserverSet<T> {
       }
     });
   }
-  
-  @Override
-  protected void finalize() throws Throwable {
+
+  public void cleanUp() {
     Preconditions.checkState(observers.isEmpty(), new Object() {
       @Override
       public String toString() {
