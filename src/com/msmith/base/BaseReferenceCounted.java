@@ -23,7 +23,11 @@ public abstract class BaseReferenceCounted implements ReferenceCounted {
     }
   }
 
-  protected void cleanUp() {}
+  protected void cleanUp() {
+    for (ReferenceCounted child : children) {
+      child.decRef();
+    }
+  }
 
   protected <T extends ReferenceCounted> T addChild(T child) {
     ReferenceCounting.incRef(child);
