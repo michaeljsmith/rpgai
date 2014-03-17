@@ -33,27 +33,26 @@ public class HumanBehaviourModule {
 
   public void run() {
 
-    Collection<ItemAvailableNotion<String>> itemsAvailable = provider
-            .get(new TypeLiteral<ItemAvailableNotion<String>>() {});
+    Collection<ItemAvailableNotion<String>> itemsAvailable =
+        provider.get(new TypeLiteral<ItemAvailableNotion<String>>() {});
     MutableCollection<Course> courses = provider.get(new TypeLiteral<Course>() {});
 
-    // For all available items we know of, search for paths to them. For any
-    // paths, add a possible course of action.
-    children.add(insertAll(courses, flatten(transform(itemsAvailable,
-            new Function<ItemAvailableNotion<String>, Collection<Course>>() {
-              @Override
-              public Collection<Course> apply(ItemAvailableNotion<String> itemAvailable) {
+    // For all available items we know of, search for paths to them. For any paths, add a possible
+    // course of action.
+    children.add(insertAll(courses, flatten(
+        transform(itemsAvailable, new Function<ItemAvailableNotion<String>, Collection<Course>>() {
+          @Override
+          public Collection<Course> apply(ItemAvailableNotion<String> itemAvailable) {
 
-                PathFinder.Request pathFinderRequest = pathFinder.request();
-                return transform(pathFinderRequest.paths(),
-                        new Function<PathFinder.Path, Course>() {
-                          @Override
-                          public Course apply(PathFinder.Path path) {
-                            return new GatherItemCourse(path);
-                          }
-                        });
+            PathFinder.Request pathFinderRequest = pathFinder.request();
+            return transform(pathFinderRequest.paths(), new Function<PathFinder.Path, Course>() {
+              @Override
+              public Course apply(PathFinder.Path path) {
+                return new GatherItemCourse(path);
               }
-            }))));
+            });
+          }
+        }))));
   }
 
   public static ReferenceCounted configure(NotionCollectionProvider provider,

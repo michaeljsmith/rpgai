@@ -30,7 +30,7 @@ public class Transform<T extends ReferenceCounted, U extends ReferenceCounted> e
 
         @Override
         public void notify(Observer<U> observer) {
-          observer.onRemoveItem(addedItem);
+          observer.onAddItem(addedItem);
         }});
     }
 
