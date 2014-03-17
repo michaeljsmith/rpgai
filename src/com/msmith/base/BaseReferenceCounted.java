@@ -13,6 +13,7 @@ public abstract class BaseReferenceCounted implements ReferenceCounted {
 
   @Override
   public final void decRef() {
+    Preconditions.checkState(refCount > 0, "decRef() called too often.");
     if (--refCount == 0) {
       cleanUp();
     }

@@ -5,6 +5,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+
 import com.msmith.base.ReferenceCounting;
 import com.msmith.base.observables.BaseCollection;
 import com.msmith.base.observables.Collection;
@@ -80,13 +82,31 @@ public class Transform<T, U> extends BaseCollection<U> {
     return sourceDestinationMap.values().iterator();
   }
 
-  private U addCorrespondingItem(T sourceItem) {
+  private U addCorrespondingItem(final T sourceItem) {
     U newItem = function.apply(sourceItem);
-    sourceDestinationMap.put(sourceItem, newItem);
+
+    Preconditions.checkArgument(null == sourceDestinationMap.put(sourceItem, newItem),
+        new Object() {
+      @Override
+      public String toString() {
+        return "Item already in collection: " + sourceItem;
+      }
+    });
+
     return newItem;
   }
 
-  private U removeCorrespondingItem(T sourceItem) {
-    return sourceDestinationMap.remove(sourceItem);
+  private U removeCorrespondingItem(final T sourceItem) {
+    U item = sourceDestinationMap.remove(sourceItem);
+
+    Preconditions.checkArgument(null != item,
+        new Object() {
+      @Override
+      public String toString() {
+        return "Non-existent item removed: " + sourceItem;
+      }
+    });
+
+    return item;
   }
 }
