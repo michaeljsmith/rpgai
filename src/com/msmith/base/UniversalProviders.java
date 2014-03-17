@@ -1,5 +1,6 @@
 package com.msmith.base;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,12 +11,13 @@ public class UniversalProviders {
 
   public static UniversalProvider newSimpleUniversalProvider() {
     return new UniversalProvider() {
-      private final Map<TypeLiteral<?>, Object> classObjectMap =
-              new HashMap<TypeLiteral<?>, Object>();
+      private final Map<Type, Object> classObjectMap =
+              new HashMap<Type, Object>();
 
       @Override
-      public <T> T get(TypeLiteral<T> type) {
-        Class<T> clazz = type.getClassObject();
+      public <T> T get(TypeLiteral<T> typeLiteral) {
+        Class<T> clazz = typeLiteral.getClassObject();
+        Type type = typeLiteral.type();
 
         Object object = classObjectMap.get(type);
         if (object != null) {

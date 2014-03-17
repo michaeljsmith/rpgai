@@ -14,6 +14,10 @@ public abstract class TypeLiteral<T> {
     this.type = ((ParameterizedType) superclass).getActualTypeArguments()[0];
   }
 
+  public Type type() {
+    return type;
+  }
+
   public Class<T> getClassObject() {
     Class<?> rawType = type instanceof Class<?> ?
             (Class<?>) type : (Class<?>) ((ParameterizedType) type).getRawType();
