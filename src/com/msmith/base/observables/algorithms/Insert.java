@@ -2,17 +2,16 @@ package com.msmith.base.observables.algorithms;
 
 import com.msmith.base.BaseReferenceCounted;
 import com.msmith.base.ReferenceCounted;
-import com.msmith.base.ReferenceCounting;
 import com.msmith.base.observables.MutableCollection;
 
-public class Insert<T> extends BaseReferenceCounted {
+public class Insert<T extends ReferenceCounted> extends BaseReferenceCounted {
 
   private final MutableCollection<T> collection;
   private final T item;
 
   public Insert(MutableCollection<T> collection, T item) {
-    this.collection = ReferenceCounting.incRef(collection);
-    this.item = item;
+    this.collection = addChild(collection);
+    this.item = addChild(item);
 
     collection.add(item);
   }
@@ -20,10 +19,13 @@ public class Insert<T> extends BaseReferenceCounted {
   @Override
   protected void cleanUp() {
     collection.remove(item);
-    collection.decRef();
+
+    super.cleanUp();
   }
 
-  public static <T> ReferenceCounted insert(MutableCollection<T> collection, T item) {
+  public static <T extends ReferenceCounted> ReferenceCounted insert(
+      MutableCollection<T> collection, T item) {
+
     return new Insert<T>(collection, item);
   }
 }

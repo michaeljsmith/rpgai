@@ -7,12 +7,14 @@ import java.util.Map;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
+import com.msmith.base.ReferenceCounted;
 import com.msmith.base.ReferenceCounting;
 import com.msmith.base.observables.BaseCollection;
 import com.msmith.base.observables.Collection;
 import com.msmith.base.observables.ObserverSet;
 
-public class Transform<T, U> extends BaseCollection<U> {
+public class Transform<T extends ReferenceCounted, U extends ReferenceCounted> extends
+    BaseCollection<U> {
 
   private final Function<T, U> function;
   private final Map<T, U> sourceDestinationMap = new HashMap<T, U>();
@@ -42,12 +44,14 @@ public class Transform<T, U> extends BaseCollection<U> {
         public void notify(Observer<U> observer) {
           observer.onRemoveItem(removedItem);
         }});
+
+      removedItem.decRef();
     }
   };
   private Collection<T> source;
 
   public Transform(Collection<T> source, Function<T, U> function) {
-    this.source = ReferenceCounting.incRef(source);
+    this.source = addChild(source);
     source.addObserver(observer);
     this.function = function;
 
@@ -59,11 +63,19 @@ public class Transform<T, U> extends BaseCollection<U> {
   @Override
   public void cleanUp() {
     source.removeObserver(observer);
-    source.decRef();
+
+    for (U item : sourceDestinationMap.values()) {
+      item.decRef();
+    }
+
     observers.cleanUp();
+
+    super.cleanUp();
   }
 
-  public static <T, U> Collection<U> transform(Collection<T> source, Function<T, U> function) {
+  public static <T extends ReferenceCounted, U extends ReferenceCounted> Collection<U> transform(
+      Collection<T> source, Function<T, U> function) {
+
     return new Transform<T, U>(source, function);
   }
 
@@ -83,7 +95,7 @@ public class Transform<T, U> extends BaseCollection<U> {
   }
 
   private U addCorrespondingItem(final T sourceItem) {
-    U newItem = function.apply(sourceItem);
+    U newItem = ReferenceCounting.incRef(function.apply(sourceItem));
 
     Preconditions.checkArgument(null == sourceDestinationMap.put(sourceItem, newItem),
         new Object() {

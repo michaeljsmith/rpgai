@@ -6,9 +6,12 @@ import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
+import com.msmith.base.ReferenceCounted;
+
 public class Collections {
-  public static final class MutableCollectionImpl<T> extends BaseCollection<T> implements
-          MutableCollection<T> {
+  public static final class MutableCollectionImpl<T extends ReferenceCounted>
+      extends BaseCollection<T> implements MutableCollection<T> {
+
     private final Set<T> items = new HashSet<T>();
     private final ObserverSet<Observer<T>> observers = ObserverSet.newSet();
 
@@ -20,6 +23,7 @@ public class Collections {
     @Override
     public void cleanUp() {
       observers.cleanUp();
+      super.cleanUp();
     }
 
     @Override
@@ -69,7 +73,7 @@ public class Collections {
 
   private Collections() {}
 
-  public static <T> MutableCollection<T> newCollection() {
+  public static <T extends ReferenceCounted> MutableCollection<T> newCollection() {
     return new MutableCollectionImpl<T>();
   }
 }

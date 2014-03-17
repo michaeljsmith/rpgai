@@ -1,6 +1,8 @@
 package com.msmith.base.observables;
 
-public interface MutableCollection<T> extends Collection<T> {
+import com.msmith.base.ReferenceCounted;
+
+public interface MutableCollection<T extends ReferenceCounted> extends Collection<T> {
   void add(T item);
   void remove(T item);
 }

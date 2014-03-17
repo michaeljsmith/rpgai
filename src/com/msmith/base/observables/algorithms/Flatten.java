@@ -2,14 +2,14 @@ package com.msmith.base.observables.algorithms;
 
 import java.util.Iterator;
 
-import com.msmith.base.ReferenceCounting;
+import com.msmith.base.ReferenceCounted;
 import com.msmith.base.observables.BaseCollection;
 import com.msmith.base.observables.Collection;
 import com.msmith.base.observables.ObserverSet;
 
-public class Flatten<T> extends BaseCollection<T> {
+public class Flatten<T extends ReferenceCounted> extends BaseCollection<T> {
 
-  private static class IteratorImpl<T> implements Iterator<T> {
+  private static class IteratorImpl<T extends ReferenceCounted> implements Iterator<T> {
 
     private final Iterator<Collection<T>> collectionIterator;
     private Iterator<T> iterator;
@@ -95,7 +95,7 @@ public class Flatten<T> extends BaseCollection<T> {
   };
 
   public Flatten(Collection<Collection<T>> collections) {
-    this.collections = ReferenceCounting.incRef(collections);
+    this.collections = addChild(collections);
 
     collections.addObserver(collectionObserver);
     for (Collection<T> collection : collections) {
@@ -110,12 +110,14 @@ public class Flatten<T> extends BaseCollection<T> {
     }
 
     collections.removeObserver(collectionObserver);
-    collections.decRef();
 
     observers.cleanUp();
+
+    super.cleanUp();
   }
 
-  public static <T> Collection<T> flatten(Collection<Collection<T>> courses) {
+  public static <T extends ReferenceCounted> Collection<T> flatten(
+      Collection<Collection<T>> courses) {
     return new Flatten<T>(courses);
   }
 

@@ -2,9 +2,13 @@ package com.msmith.base;
 
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class BaseReferenceCounted implements ReferenceCounted {
 
   private int refCount = 0;
+  private List<ReferenceCounted> children = new ArrayList<ReferenceCounted>();
 
   @Override
   public final void incRef() {
@@ -19,7 +23,13 @@ public abstract class BaseReferenceCounted implements ReferenceCounted {
     }
   }
 
-  protected abstract void cleanUp();
+  protected void cleanUp() {}
+
+  protected <T extends ReferenceCounted> T addChild(T child) {
+    ReferenceCounting.incRef(child);
+    children.add(child);
+    return child;
+  }
 
   @Override
   protected void finalize() throws Throwable {

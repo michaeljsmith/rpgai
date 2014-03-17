@@ -4,11 +4,13 @@ import static com.msmith.base.observables.algorithms.Flatten.flatten;
 import static com.msmith.base.observables.algorithms.InsertAll.insertAll;
 import static com.msmith.base.observables.algorithms.Transform.transform;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.google.common.base.Function;
+
 import com.msmith.base.ReferenceCounted;
+import com.msmith.base.ReferenceCounting;
 import com.msmith.base.observables.Collection;
 import com.msmith.base.observables.MutableCollection;
 import com.msmith.base.reflection.TypeLiteral;
@@ -22,11 +24,14 @@ public class HumanBehaviourModule {
   private final NotionCollectionProvider provider;
   private final PathFinder pathFinder;
 
-  private Set<ReferenceCounted> handles = new HashSet<ReferenceCounted>();
+  private List<ReferenceCounted> children = new ArrayList<ReferenceCounted>();
 
-  public HumanBehaviourModule(NotionCollectionProvider provider, PathFinder pathFinder) {
+  public HumanBehaviourModule(NotionCollectionProvider provider, final PathFinder pathFinder) {
     this.provider = provider;
     this.pathFinder = pathFinder;
+  }
+
+  public void run() {
 
     Collection<ItemAvailableNotion<String>> itemsAvailable = provider
             .get(new TypeLiteral<ItemAvailableNotion<String>>() {});
@@ -34,7 +39,7 @@ public class HumanBehaviourModule {
 
     // For all available items we know of, search for paths to them. For any
     // paths, add a possible course of action.
-    handles.add(insertAll(courses, flatten(transform(itemsAvailable,
+    children.add(insertAll(courses, flatten(transform(itemsAvailable,
             new Function<ItemAvailableNotion<String>, Collection<Course>>() {
               @Override
               public Collection<Course> apply(ItemAvailableNotion<String> itemAvailable) {
@@ -49,5 +54,13 @@ public class HumanBehaviourModule {
                         });
               }
             }))));
+  }
+
+  public static ReferenceCounted configure(NotionCollectionProvider provider,
+      PathFinder pathFinder) {
+
+    HumanBehaviourModule module = new HumanBehaviourModule(provider, pathFinder);
+    module.run();
+    return ReferenceCounting.compoundReferenceCounted(module.children);
   }
 }

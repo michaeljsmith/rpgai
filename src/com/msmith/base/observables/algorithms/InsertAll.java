@@ -11,8 +11,9 @@ import com.msmith.base.observables.MutableCollection;
 public class InsertAll {
   private InsertAll() {}
 
-  public static <T> ReferenceCounted insertAll(final MutableCollection<T> destination,
-          Collection<T> source) {
+  public static <T extends ReferenceCounted> ReferenceCounted insertAll(
+      final MutableCollection<T> destination, Collection<T> source) {
+
     return forEach(source, new Function<T, ReferenceCounted>() {
       @Override
       public ReferenceCounted apply(T item) {

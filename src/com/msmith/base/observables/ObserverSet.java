@@ -1,5 +1,6 @@
 package com.msmith.base.observables;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
@@ -14,7 +15,7 @@ public class ObserverSet<T> {
     return new ObserverSet<T>();
   }
 
-  private Set<T> observers;
+  private Set<T> observers = new HashSet<T>();
 
   public void notifyAll(Notifier<T> notifier) {
     for (T observer: observers) {

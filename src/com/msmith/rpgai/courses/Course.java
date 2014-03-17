@@ -1,5 +1,7 @@
 package com.msmith.rpgai.courses;
 
-public class Course {
+import com.msmith.base.ReferenceCounted;
+
+public interface Course extends ReferenceCounted {
 
 }

@@ -1,4 +1,6 @@
 package com.msmith.rpgai.notions;
 
-public class ItemAvailableNotion<T> {
+import com.msmith.base.BaseReferenceCounted;
+
+public class ItemAvailableNotion<T> extends BaseReferenceCounted {
 }
