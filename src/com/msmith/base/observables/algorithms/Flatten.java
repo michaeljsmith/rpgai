@@ -117,8 +117,8 @@ public class Flatten<T extends ReferenceCounted> extends BaseCollection<T> {
   }
 
   public static <T extends ReferenceCounted> Collection<T> flatten(
-      Collection<Collection<T>> courses) {
-    return new Flatten<T>(courses);
+      Collection<Collection<T>> collections) {
+    return new Flatten<T>(collections);
   }
 
   @Override
